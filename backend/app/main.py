@@ -1,10 +1,19 @@
-from fastapi import FastAPI
+
+import json
+
+import fitz
+from fastapi import FastAPI, UploadFile, File, HTTPException
+
+from backend.app.database import get_connection
+
 
 app = FastAPI(
     title="RegulaLens AI",
     description="Regulatory intelligence and software impact analysis",
-    version="0.1.0"
+    version="0.2.0"
 )
+
+MAX_PDF_SIZE = 10 * 1024 * 1024  # 10 MB
 
 
 @app.get("/")
@@ -18,3 +27,149 @@ def home():
 @app.get("/health")
 def health_check():
     return {"status": "healthy"}
+
+
+def save_document(filename, pages):
+    """Save extracted document text and metadata in SQLite."""
+
+    with get_connection() as connection:
+        cursor = connection.execute(
+            """
+            INSERT INTO documents (filename, page_count, pages_json)
+            VALUES (?, ?, ?)
+            """,
+            (
+                filename,
+                len(pages),
+                json.dumps(pages, ensure_ascii=False)
+            )
+        )
+
+        return cursor.lastrowid
+
+
+@app.post("/documents/extract")
+async def extract_pdf(file: UploadFile = File(...)):
+    """Upload a PDF, extract its text, and save it."""
+
+    if not file.filename or not file.filename.lower().endswith(".pdf"):
+        raise HTTPException(
+            status_code=400,
+            detail="Please upload a PDF file."
+        )
+
+    try:
+        pdf_bytes = await file.read(MAX_PDF_SIZE + 1)
+
+        if not pdf_bytes:
+            raise HTTPException(
+                status_code=400,
+                detail="The uploaded file is empty."
+            )
+
+        if len(pdf_bytes) > MAX_PDF_SIZE:
+            raise HTTPException(
+                status_code=413,
+                detail="PDF size must not exceed 10 MB."
+            )
+
+        try:
+            document = fitz.open(
+                stream=pdf_bytes,
+                filetype="pdf"
+            )
+        except Exception:
+            raise HTTPException(
+                status_code=400,
+                detail="The file is not a valid, readable PDF."
+            )
+
+        try:
+            if document.is_encrypted:
+                raise HTTPException(
+                    status_code=400,
+                    detail="Password-protected PDFs are not supported."
+                )
+
+            pages = []
+
+            for page_index, page in enumerate(document):
+                text = page.get_text("text")
+
+                pages.append({
+                    "page_number": page_index + 1,
+                    "text": text.strip()
+                })
+
+            if not any(page["text"] for page in pages):
+                raise HTTPException(
+                    status_code=422,
+                    detail=(
+                        "No readable text was found. "
+                        "The PDF may be scanned and require OCR."
+                    )
+                )
+
+            document_id = save_document(file.filename, pages)
+
+            return {
+                "message": "PDF extracted and saved successfully.",
+                "document_id": document_id,
+                "filename": file.filename,
+                "page_count": len(pages),
+                "pages": pages
+            }
+
+        finally:
+            document.close()
+
+    finally:
+        await file.close()
+
+
+@app.get("/documents")
+def list_documents():
+    """List saved documents without returning their full text."""
+
+    with get_connection() as connection:
+        rows = connection.execute(
+            """
+            SELECT id, filename, page_count, created_at
+            FROM documents
+            ORDER BY id DESC
+            """
+        ).fetchall()
+
+    return {
+        "count": len(rows),
+        "documents": [dict(row) for row in rows]
+    }
+
+
+@app.get("/documents/{document_id}")
+def get_document(document_id: int):
+    """Retrieve a saved document and its extracted page text."""
+
+    with get_connection() as connection:
+        row = connection.execute(
+            """
+            SELECT id, filename, page_count, pages_json, created_at
+            FROM documents
+            WHERE id = ?
+            """,
+            (document_id,)
+        ).fetchone()
+
+    if row is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Document not found."
+        )
+
+    return {
+        "document_id": row["id"],
+        "filename": row["filename"],
+        "page_count": row["page_count"],
+        "created_at": row["created_at"],
+        "pages": json.loads(row["pages_json"])
+    }
