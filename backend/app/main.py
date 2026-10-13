@@ -3,7 +3,7 @@ import json
 
 import fitz
 from fastapi import FastAPI, UploadFile, File, HTTPException
-
+from backend.app.document_comparison import compare_documents
 from backend.app.database import get_connection
 
 
@@ -173,3 +173,24 @@ def get_document(document_id: int):
         "created_at": row["created_at"],
         "pages": json.loads(row["pages_json"])
     }
+
+from pydantic import BaseModel
+
+
+class CompareDocumentsRequest(BaseModel):
+    old_text: str
+    new_text: str
+
+
+@app.post("/documents/compare")
+def compare_document_versions(request: CompareDocumentsRequest):
+    if not request.old_text.strip() or not request.new_text.strip():
+        raise HTTPException(
+            status_code=400,
+            detail="Both document versions must contain text."
+        )
+
+    return compare_documents(
+        request.old_text,
+        request.new_text
+    )
