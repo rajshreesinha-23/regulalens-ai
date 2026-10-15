@@ -322,3 +322,349 @@ tbody tr:hover { background: #fcfefd; }
   .source-page { padding: 13px; }
   .modal-footer { padding: 12px 14px; }
 }
+
+/* ==========================================
+   REGULALENS AI — OVERVIEW DASHBOARD POLISH
+   White, navy and blue fintech theme
+   ========================================== */
+
+.page-content:has(.welcome-banner) {
+  background:
+    radial-gradient(ellipse at 95% 0%, #eaf2ff 0%, transparent 32%),
+    #f7f9fc;
+}
+
+/* More breathing room around the page heading */
+.page-content:has(.welcome-banner) > .page-heading {
+  margin-bottom: 28px;
+}
+
+.page-content:has(.welcome-banner) .eyebrow-line {
+  background: #3478f6;
+}
+
+.page-content:has(.welcome-banner) .heading-period {
+  color: #3478f6;
+}
+
+.page-content:has(.welcome-banner) .page-heading h1 {
+  color: #132b4a;
+  letter-spacing: -1.5px;
+}
+
+.page-content:has(.welcome-banner) .subtitle {
+  color: #718198;
+}
+
+/* Primary action: confident blue */
+.page-content:has(.welcome-banner) .button-primary {
+  background: #245fe7;
+  border-color: #245fe7;
+  box-shadow: 0 4px 12px #245fe71c;
+}
+
+.page-content:has(.welcome-banner) .button-primary:hover {
+  background: #174bc2;
+  border-color: #174bc2;
+  box-shadow: 0 6px 16px #245fe72b;
+}
+
+.page-content:has(.welcome-banner) .button-secondary {
+  color: #304763;
+  border-color: #dce5f0;
+  box-shadow: 0 2px 5px #193b6007;
+}
+
+.page-content:has(.welcome-banner) .button-secondary:hover {
+  background: #f0f5ff;
+  border-color: #c3d5f4;
+}
+
+/* Premium navy welcome banner */
+.page-content:has(.welcome-banner) .welcome-banner {
+  min-height: 258px;
+  padding: 32px 38px;
+  border: 1px solid #203e67;
+  border-radius: 16px;
+  background:
+    radial-gradient(ellipse at 85% 15%, #244f89 0%, transparent 38%),
+    linear-gradient(115deg, #10213c 0%, #152f53 60%, #183f68 100%);
+  box-shadow: 0 12px 30px #152f5317;
+}
+
+.page-content:has(.welcome-banner) .banner-kicker {
+  color: #a9caff;
+}
+
+.page-content:has(.welcome-banner) .banner-content h2 {
+  font-size: 29px;
+  letter-spacing: -1px;
+  line-height: 1.3;
+}
+
+.page-content:has(.welcome-banner) .banner-content p {
+  color: #c1cee0;
+  max-width: 430px;
+}
+
+.page-content:has(.welcome-banner) .banner-button {
+  color: #b9d3ff;
+}
+
+.page-content:has(.welcome-banner) .banner-button:hover {
+  color: #ffffff;
+}
+
+.page-content:has(.welcome-banner) .visual-center {
+  background: linear-gradient(145deg, #5a91ff, #2459c8);
+  box-shadow: 0 0 0 12px #ffffff08, 0 10px 38px #07172c75;
+}
+
+.page-content:has(.welcome-banner) .ring-two {
+  border-color: #8bb8ff40;
+}
+
+.page-content:has(.welcome-banner) .float-check {
+  background: #e8f1ff;
+  color: #2864d8;
+}
+
+.page-content:has(.welcome-banner) .float-spark {
+  background: #edf3ff;
+  color: #416fc1;
+}
+
+/* Section heading */
+.page-content:has(.welcome-banner) .section-heading {
+  margin-top: 32px;
+  margin-bottom: 17px;
+}
+
+.page-content:has(.welcome-banner) .section-heading h2 {
+  color: #172f4d;
+  font-size: 16px;
+  letter-spacing: -0.4px;
+}
+
+.page-content:has(.welcome-banner) .section-heading p {
+  color: #7d8ca1;
+}
+
+.page-content:has(.welcome-banner) .live-label {
+  color: #63768e;
+}
+
+/* Stat cards */
+.page-content:has(.welcome-banner) .metrics-grid {
+  gap: 16px;
+}
+
+.page-content:has(.welcome-banner) .metric-card {
+  position: relative;
+  overflow: hidden;
+  padding: 19px 18px 15px;
+  border: 1px solid #e3eaf3;
+  border-radius: 13px;
+  background: #ffffff;
+  box-shadow: 0 3px 10px #183b6507;
+  transition: transform 180ms ease, box-shadow 180ms ease,
+    border-color 180ms ease;
+}
+
+.page-content:has(.welcome-banner) .metric-card:hover {
+  transform: translateY(-3px);
+  border-color: #cbdcf8;
+  box-shadow: 0 10px 24px #183b6510;
+}
+
+.page-content:has(.welcome-banner) .metric-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+}
+
+.page-content:has(.welcome-banner) .metric-icon.teal {
+  color: #2462d5;
+  background: #edf3ff;
+}
+
+.page-content:has(.welcome-banner) .metric-icon.violet {
+  color: #6d5bd0;
+  background: #f1efff;
+}
+
+.page-content:has(.welcome-banner) .metric-icon.amber {
+  color: #ad7a24;
+  background: #fff5e4;
+}
+
+.page-content:has(.welcome-banner) .metric-icon.blue {
+  color: #3478e5;
+  background: #eaf3ff;
+}
+
+.page-content:has(.welcome-banner) .metric-label {
+  color: #7d8da3;
+  letter-spacing: 0.85px;
+}
+
+.page-content:has(.welcome-banner) .metric-value {
+  color: #142e4e;
+  font-size: 31px;
+  margin: 19px 0 15px;
+  letter-spacing: -1.2px;
+}
+
+.page-content:has(.welcome-banner) .metric-bottom {
+  border-top-color: #edf1f7;
+}
+
+.page-content:has(.welcome-banner) .metric-neutral {
+  color: #72839a;
+}
+
+.page-content:has(.welcome-banner) .metric-neutral svg {
+  color: #3478e5;
+}
+
+/* Recently added and next-steps panels */
+.page-content:has(.welcome-banner) .dashboard-grid {
+  gap: 18px;
+  margin-top: 21px;
+}
+
+.page-content:has(.welcome-banner) .panel {
+  border-color: #e3eaf3;
+  border-radius: 13px;
+  box-shadow: 0 3px 12px #183b6506;
+}
+
+.page-content:has(.welcome-banner) .panel-heading {
+  padding: 21px 21px 17px;
+  border-bottom-color: #edf1f7;
+}
+
+.page-content:has(.welcome-banner) .panel-heading h3 {
+  color: #1a3453;
+  font-size: 13px;
+}
+
+.page-content:has(.welcome-banner) .panel-heading p {
+  color: #7d8ca1;
+}
+
+.page-content:has(.welcome-banner) .text-button {
+  color: #2864d8;
+}
+
+.page-content:has(.welcome-banner) .text-button:hover {
+  color: #1747a6;
+}
+
+.page-content:has(.welcome-banner) .document-row {
+  padding-top: 14px;
+  padding-bottom: 14px;
+  border-bottom-color: #edf1f6;
+  transition: background 150ms ease;
+}
+
+.page-content:has(.welcome-banner) .document-row:hover {
+  background: #f6f9ff;
+}
+
+.page-content:has(.welcome-banner) .pdf-icon {
+  color: #2c67d5;
+  background: #edf3ff;
+}
+
+.page-content:has(.welcome-banner) .document-info strong {
+  color: #263e5c;
+}
+
+.page-content:has(.welcome-banner) .status-badge.extracted {
+  color: #2466c7;
+  background: #edf4ff;
+}
+
+.page-content:has(.welcome-banner) .row-arrow {
+  color: #8ba0bd;
+}
+
+.page-content:has(.welcome-banner) .mini-spark {
+  color: #2c67d5;
+  background: #edf3ff;
+}
+
+/* Next-steps checklist */
+.page-content:has(.welcome-banner) .checklist-item {
+  border-top-color: #edf1f6;
+}
+
+.page-content:has(.welcome-banner) .check-circle.complete {
+  color: #2466d5;
+  background: #edf3ff;
+  border-color: #d8e5ff;
+}
+
+.page-content:has(.welcome-banner) .checklist-item strong {
+  color: #263e5c;
+}
+
+.page-content:has(.welcome-banner) .checklist-item p {
+  color: #7889a0;
+}
+
+.page-content:has(.welcome-banner) .checklist-item > button:hover {
+  color: #245fe7;
+}
+
+.page-content:has(.welcome-banner) .feature-tag {
+  color: #54729c;
+  background: #eef3fa;
+}
+
+/* Evidence note */
+.page-content:has(.welcome-banner) .bottom-note {
+  border-color: #dce7f6;
+  border-radius: 10px;
+  color: #637892;
+  background: #f0f5fd;
+}
+
+.page-content:has(.welcome-banner) .bottom-note svg {
+  color: #2d69d5;
+}
+
+.page-content:has(.welcome-banner) .bottom-note strong {
+  color: #254b80;
+}
+
+/* Subtle keyboard focus for the dashboard */
+.page-content:has(.welcome-banner) button:focus-visible,
+.page-content:has(.welcome-banner) input:focus-visible {
+  outline-color: #6e9df7;
+}
+
+/* Responsive adjustments */
+@media (max-width: 650px) {
+  .page-content:has(.welcome-banner) .welcome-banner {
+    padding: 25px 22px;
+    border-radius: 13px;
+  }
+
+  .page-content:has(.welcome-banner) .banner-content h2 {
+    font-size: 25px;
+  }
+
+  .page-content:has(.welcome-banner) .metric-card {
+    padding: 13px 11px;
+  }
+
+  .page-content:has(.welcome-banner) .metric-value {
+    font-size: 26px;
+  }
+
+  .page-content:has(.welcome-banner) .panel-heading {
+    padding: 16px 13px 13px;
+  }
+}
