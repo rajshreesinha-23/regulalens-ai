@@ -1,96 +1,91 @@
 # RegulaLens AI
 
-**AI-Powered Regulatory Intelligence and Document Analysis Platform**
+**Regulatory Intelligence • Document Analysis • Change Detection**
 
-RegulaLens AI is a regulatory intelligence platform designed to help users analyze regulatory documents, extract information from PDF circulars, and identify changes between document versions.
+RegulaLens AI is a regulatory intelligence platform designed to simplify the analysis of regulatory documents, including public circulars and notifications from organizations such as the Reserve Bank of India (RBI) and the Securities and Exchange Board of India (SEBI).
 
-The project aims to simplify regulatory document management by combining document processing, text comparison, and, in future iterations, retrieval-augmented generation (RAG) for evidence-based regulatory question answering.
+The project combines a React dashboard with a FastAPI backend to support PDF ingestion, text extraction, document storage, and regulatory text comparison. The long-term goal is to build an evidence-grounded intelligence system that helps users understand regulatory changes and identify requirements that may need further review.
 
-> **Project status:** Under active development. PDF text extraction, SQLite document storage, a React dashboard foundation, and a text-based document comparison API have been implemented. RAG-based question answering, automated regulatory impact analysis, and full document-to-document comparison are planned enhancements.
+> **Project status:** Under active development. PDF extraction, SQLite document persistence, document retrieval APIs, a React dashboard, and a text-based comparison module are implemented. Citation-backed RAG, automated monitoring, and evidence-based impact analysis remain in development.
 
 ---
 
 ## Table of Contents
 
+- [Overview](#overview)
 - [Problem Statement](#problem-statement)
-- [Project Objectives](#project-objectives)
-- [Current Features](#current-features)
+- [Key Features](#key-features)
 - [Technology Stack](#technology-stack)
 - [System Architecture](#system-architecture)
 - [Application Workflow](#application-workflow)
-- [Document Comparison](#document-comparison)
-- [API Documentation](#api-documentation)
 - [Project Structure](#project-structure)
 - [Getting Started](#getting-started)
+- [API Reference](#api-reference)
+- [Document Comparison](#document-comparison)
 - [Testing](#testing)
 - [Current Limitations](#current-limitations)
 - [Roadmap](#roadmap)
-- [Future Enhancements](#future-enhancements)
 - [Contributing](#contributing)
 - [Disclaimer](#disclaimer)
 
 ---
 
-## Problem Statement
+## Overview
 
-Financial and compliance teams often need to review lengthy regulatory documents, maintain document records, and identify changes between updated circulars.
+Regulatory documents can be lengthy, technical, and difficult to compare across versions. Manually reviewing these documents makes it challenging to identify changed requirements, maintain document history, and determine which areas require additional attention.
 
-Manually comparing versions can be time-consuming and may make it difficult to locate relevant changes quickly.
+RegulaLens AI aims to make this process more manageable through a centralized document workspace and a modular backend.
 
-RegulaLens AI aims to address these challenges by providing a centralized platform for document ingestion, text extraction, version comparison, and eventually AI-assisted regulatory analysis.
+The platform is being developed around four core capabilities:
 
-## Project Objectives
+1. **Document ingestion:** Upload regulatory PDFs and extract readable text.
+2. **Document management:** Store and retrieve document metadata and extracted content.
+3. **Change detection:** Identify textual differences between document versions.
+4. **Regulatory intelligence:** Progress toward source-grounded question answering and impact analysis.
 
-- Extract readable text from uploaded regulatory PDF documents.
-- Preserve page-level information for document traceability.
-- Store document metadata and extracted content in a database.
-- Provide API endpoints to upload, list, and retrieve documents.
-- Identify textual differences between two document versions.
-- Build a foundation for citation-backed regulatory question answering.
-- Develop future capabilities for change tracking and impact analysis.
+## Key Features
 
-## Current Features
+### 1. Regulatory Document Ingestion
 
-### 1. PDF Upload and Validation
+- Upload PDF files through the FastAPI backend.
+- Validate uploaded file types and enforce a 10 MB file-size limit.
+- Extract readable text using PyMuPDF.
+- Process documents page by page.
+- Preserve page-level text and document metadata for traceability.
 
-- Accepts PDF documents through a FastAPI endpoint.
-- Validates file extensions and file sizes.
-- Handles empty, invalid, and password-protected PDF files.
-- Reports when a PDF has no readable text, such as a scanned document that requires OCR.
+### 2. Document Storage and Retrieval
 
-### 2. PDF Text Extraction
+- Persist document records using SQLite.
+- Store document metadata, page count, and extracted content.
+- List previously uploaded documents.
+- Retrieve individual document records through REST API endpoints.
 
-- Uses PyMuPDF to extract text from PDF documents.
-- Processes documents page by page.
-- Preserves page numbers alongside extracted text.
-- Returns the extracted content in the API response.
+### 3. Interactive Dashboard
 
-### 3. Database Storage
+The React frontend provides a workspace for navigating the document-processing and planned intelligence workflows.
 
-- Uses SQLite for document persistence.
-- Stores document metadata, page count, and extracted page content.
-- Provides endpoints to list stored documents and retrieve individual documents.
+- **Overview:** Dashboard metrics, backend connection status, recent documents, and workflow shortcuts.
+- **Documents:** PDF upload, document search, document listing, and extracted-text inspection.
+- **Change Monitor:** Interface for selecting documents and reviewing comparison results; end-to-end integration with stored-document comparison is still being aligned with the backend API.
+- **Ask RegulaLens:** Conversational question-and-answer interface scaffold for future document-grounded retrieval.
+- **Impact Analysis:** Interface for capturing regulatory requirements for future evidence-backed review.
+
+The frontend is under active development. The presence of an interface does not mean every underlying AI workflow is implemented.
 
 ### 4. Text-Based Document Comparison
 
-- Uses Python's built-in `difflib.SequenceMatcher`.
-- Compares two supplied text versions.
-- Detects inserted, deleted, and replaced text blocks.
-- Returns structured JSON containing the type of change, previous text, and revised text.
+- Compare two supplied text versions.
+- Detect inserted, deleted, and replaced text blocks.
+- Return structured JSON describing detected changes.
+- Keep the comparison logic separate from the API layer.
 
-**Current scope:** The comparison endpoint accepts text supplied directly in the API request. Automatically retrieving two uploaded documents from the database and comparing them is a planned enhancement.
+The current comparison engine identifies textual differences. It does not independently determine whether a change alters a legal obligation or compliance status.
 
-### 5. React Frontend Foundation
+### 5. API Documentation
 
-- Provides a React-based dashboard foundation.
-- Supports development of the document upload and viewing workflow.
-- Is intended to serve as the interface for future comparison and AI-powered analysis features.
-
-### 6. REST API
-
-- Built using FastAPI.
-- Provides interactive API documentation through Swagger UI.
-- Supports testing endpoints independently of the frontend.
+- REST APIs built with FastAPI.
+- Interactive API documentation through Swagger UI.
+- Endpoints that can be tested independently of the frontend.
 
 ---
 
@@ -98,170 +93,232 @@ RegulaLens AI aims to address these challenges by providing a centralized platfo
 
 | Component | Technology |
 |---|---|
-| Frontend | React |
+| Frontend | React, Vite, JavaScript |
+| UI icons | Lucide React |
+| Styling | CSS |
 | Backend | Python, FastAPI |
 | PDF processing | PyMuPDF |
 | Database | SQLite |
-| Document comparison | Python `difflib` |
-| Data validation | Pydantic |
-| API documentation | Swagger UI / OpenAPI |
-| Version control | Git and GitHub |
-| Future AI capabilities | RAG, embeddings, vector search, LLMs |
+| Text comparison | Python `difflib` |
+| API validation | Pydantic |
+| API documentation | OpenAPI, Swagger UI |
+| Version control | Git, GitHub |
+
+### Planned AI technologies
+
+The following technologies are candidates for future implementation, not a claim about the current runtime:
+
+- Retrieval-Augmented Generation (RAG)
+- Text chunking and metadata-aware retrieval
+- Embeddings and vector search
+- Large language models for evidence-grounded answers
+- Source-page citations and regulatory impact review
 
 ---
 
 ## System Architecture
 
-The current application separates the frontend, API layer, document-processing logic, and database.
+The current architecture separates the frontend, backend API, document extraction, persistence, and comparison logic.
 
 ```mermaid
 flowchart TD
-    A[User] --> B[React Dashboard]
-    B --> C[FastAPI Backend]
-    C --> D[PDF Validation]
-    D --> E[PyMuPDF Text Extraction]
-    E --> F[Page-Level Text and Metadata]
-    F --> G[SQLite Database]
-    C --> H[Document Comparison Module]
-    H --> I[Structured JSON Differences]
-    G --> C
-    I --> B
+    U[User] --> F[React + Vite Dashboard]
+    F --> API[FastAPI REST API]
+
+    API --> VAL[PDF Validation]
+    VAL --> EXT[PyMuPDF Text Extraction]
+    EXT --> META[Text + Page Metadata]
+    META --> DB[(SQLite Database)]
+
+    API --> LIST[Document Listing]
+    API --> GET[Document Retrieval]
+    DB --> LIST
+    DB --> GET
+
+    API --> CMP[Text Comparison Module]
+    CMP --> DIFF[Structured Change Results]
+
+    LIST --> F
+    GET --> F
+    DIFF --> F
 ```
 
-The diagram represents the current backend capabilities and the intended frontend workflow. Full integration of document comparison into the dashboard remains future work.
+The diagram describes the main backend components and the intended frontend integration. The document comparison API currently compares supplied text; automatically loading two stored documents and comparing them remains a follow-up integration task.
 
 ## Application Workflow
 
-### PDF ingestion workflow
+### PDF ingestion
 
 ```mermaid
 flowchart TD
-    A[Upload PDF] --> B{Valid PDF?}
-    B -- No --> C[Return Validation Error]
-    B -- Yes --> D[Extract Text Page by Page]
-    D --> E{Readable Text Found?}
-    E -- No --> F[Return Extraction Error]
-    E -- Yes --> G[Store Metadata and Page Content]
-    G --> H[Return Document ID and Extracted Text]
+    A[Select PDF] --> B[Upload to FastAPI]
+    B --> C{Valid PDF?}
+    C -- No --> D[Return Validation Error]
+    C -- Yes --> E[Extract Text Page by Page]
+    E --> F{Readable Text?}
+    F -- No --> G[Report Extraction Limitation]
+    F -- Yes --> H[Store Document Metadata and Text]
+    H --> I[Return Extraction Result]
+    I --> J[Display in Dashboard]
 ```
 
-### Document comparison workflow
+### Text comparison
 
 ```mermaid
 flowchart TD
-    A[Original Text] --> C[Comparison Engine]
+    A[Original Text] --> C[Comparison Module]
     B[Revised Text] --> C
     C --> D[SequenceMatcher]
-    D --> E[Identify Changed Blocks]
-    E --> F[Return JSON Results]
+    D --> E[Detect Changed Blocks]
+    E --> F[Return Structured JSON]
 ```
+
+### Planned RAG workflow
+
+```mermaid
+flowchart TD
+    A[Stored Regulatory Documents] --> B[Chunk Text with Page Metadata]
+    B --> C[Generate Embeddings]
+    C --> D[Vector Index]
+    E[User Question] --> F[Retrieve Relevant Passages]
+    D --> F
+    F --> G[LLM Generates Grounded Answer]
+    G --> H[Answer with Source References]
+    H --> I[Human Verification]
+```
+
+The RAG workflow is a planned architecture and is not yet implemented end to end.
 
 ---
 
-## Document Comparison
+## Project Structure
 
-The comparison module is located at:
-
-`backend/app/document_comparison.py`
-
-It exposes the function:
-
-`compare_documents(old_text, new_text)`
-
-Example:
-
-```python
-from backend.app.document_comparison import compare_documents
-
-old_text = "Reports must be submitted monthly."
-new_text = "Reports must be submitted weekly."
-
-result = compare_documents(old_text, new_text)
-
-print(result)
+```text
+regulalens-ai/
+├── backend/
+│   └── app/
+│       ├── main.py
+│       ├── database.py
+│       ├── document_comparison.py
+│       └── regulalens.db
+├── frontend/
+│   ├── src/
+│   │   ├── assets/
+│   │   ├── App.jsx
+│   │   ├── App.css
+│   │   ├── index.css
+│   │   └── main.jsx
+│   ├── package.json
+│   └── package-lock.json
+├── test_document_comparison.py
+├── requirements.txt
+├── README.md
+└── .gitignore
 ```
 
-Example output:
-
-```json
-{
-  "total_changes": 1,
-  "changes": [
-    {
-      "type": "replace",
-      "old_text": "Reports must be submitted monthly.",
-      "new_text": "Reports must be submitted weekly."
-    }
-  ]
-}
-```
-
-The `total_changes` field represents the number of detected change blocks, not necessarily the number of individual regulatory requirements affected.
+The exact files may evolve as the project grows. The SQLite database is generated application data; avoid committing local databases containing personal, confidential, or otherwise sensitive documents.
 
 ---
 
-## API Documentation
+## Getting Started
 
-Start the backend and open:
+### Prerequisites
 
-**Swagger UI:** http://127.0.0.1:8000/docs
+Install:
 
-### Available endpoints
+- Python 3.10 or later
+- Node.js and npm
+- Git
+- A code editor such as Visual Studio Code
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/rajshreesinha-23/regulalens-ai.git
+cd regulalens-ai
+```
+
+### 2. Create a Python virtual environment
+
+On Windows PowerShell:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+```
+
+If environment activation is unavailable, use the virtual environment's Python executable directly.
+
+### 3. Install backend dependencies
+
+```powershell
+python -m pip install -r requirements.txt
+```
+
+### 4. Start the backend
+
+From the repository root:
+
+```powershell
+python -m uvicorn backend.app.main:app --reload
+```
+
+The backend should be available at:
+
+- API base URL: `http://127.0.0.1:8000`
+- Swagger UI: `http://127.0.0.1:8000/docs`
+- Health check: `http://127.0.0.1:8000/health`
+
+### 5. Start the frontend
+
+Open a second terminal:
+
+```powershell
+cd frontend
+npm install
+npm run dev
+```
+
+Open the development URL printed by Vite, usually:
+
+`http://localhost:5173`
+
+The frontend uses `http://127.0.0.1:8000` as its API base URL. Ensure the backend is running and that its CORS configuration permits requests from the frontend development origin.
+
+---
+
+## API Reference
+
+Open `http://127.0.0.1:8000/docs` after starting the backend to inspect the actual endpoint schemas and test requests.
 
 | Method | Endpoint | Purpose |
 |---|---|---|
-| GET | `/` | Check the application welcome endpoint |
-| GET | `/health` | Check backend health |
-| POST | `/documents/extract` | Upload a PDF and extract its text |
-| GET | `/documents` | List stored documents |
-| GET | `/documents/{document_id}` | Retrieve a stored document |
-| POST | `/documents/compare` | Compare two text versions |
+| `GET` | `/` | Welcome endpoint |
+| `GET` | `/health` | Backend health check |
+| `POST` | `/documents/extract` | Upload a PDF and extract its text |
+| `GET` | `/documents` | List stored documents |
+| `GET` | `/documents/{document_id}` | Retrieve a stored document |
+| `POST` | `/documents/compare` | Compare supplied text versions |
 
-### 1. Health Check
+### Example: Extract a PDF
 
-**Request**
-
-```http
-GET /health
-```
-
-Checks whether the backend is running.
-
-### 2. Extract a PDF
-
-**Request**
+Send a `multipart/form-data` request to:
 
 ```http
 POST /documents/extract
 ```
 
-Upload a PDF using the `multipart/form-data` request in Swagger UI.
+Use the `file` field to upload a PDF. The backend validates the file and returns the extraction result according to its response schema.
 
-The current upload endpoint enforces a 10 MB file-size limit.
-
-### 3. List Documents
-
-**Request**
+### Example: List documents
 
 ```http
 GET /documents
 ```
 
-Returns stored document metadata, including identifiers, filenames, page counts, and creation timestamps.
+Returns the document records available through the backend.
 
-### 4. Retrieve a Document
-
-**Request**
-
-```http
-GET /documents/{document_id}
-```
-
-Retrieves a stored document and its extracted page content.
-
-### 5. Compare Two Text Versions
-
-**Request**
+### Example: Compare text
 
 ```http
 POST /documents/compare
@@ -276,224 +333,147 @@ Example request body:
 }
 ```
 
-The response contains a list of detected changes, including the previous and revised text.
+Use Swagger UI to confirm the exact request and response schema if it differs from this example.
 
 ---
 
-## Project Structure
+## Document Comparison
 
-```text
-regulalens-ai/
-│
-├── backend/
-│   └── app/
-│       ├── main.py
-│       ├── database.py
-│       ├── document_comparison.py
-│       └── regulalens.db
-│
-├── frontend/
-│   └── src/
-│       ├── App.jsx
-│       ├── App.css
-│       ├── index.css
-│       └── main.jsx
-│
-├── test_document_comparison.py
-├── requirements.txt
-├── README.md
-└── .gitignore
+The comparison module is located at:
+
+`backend/app/document_comparison.py`
+
+Its core function is:
+
+```python
+compare_documents(old_text, new_text)
 ```
 
-The database file is created and used by the application. It should not be committed if it contains local or sensitive data; the repository should document how to initialize the database instead.
+Example:
 
----
+```python
+from backend.app.document_comparison import compare_documents
 
-## Getting Started
+old_text = "Reports must be submitted monthly."
+new_text = "Reports must be submitted weekly."
 
-### Prerequisites
-
-Install the following before running the project:
-
-- Python 3.10 or later
-- Node.js and npm
-- Git
-- Visual Studio Code (recommended)
-
-### 1. Clone the repository
-
-```bash
-git clone https://github.com/rajshreesinha-23/regulalens-ai.git
-cd regulalens-ai
+result = compare_documents(old_text, new_text)
+print(result)
 ```
 
-### 2. Set up the Python environment
+A representative result is:
 
-On Windows PowerShell:
-
-```powershell
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
+```json
+{
+  "total_changes": 1,
+  "changes": [
+    {
+      "type": "replace",
+      "old_text": "Reports must be submitted monthly.",
+      "new_text": "Reports must be submitted weekly."
+    }
+  ]
+}
 ```
 
-If PowerShell blocks virtual-environment activation, you can run the Python executable directly using `.\.venv\Scripts\python.exe`.
-
-### 3. Install backend dependencies
-
-```powershell
-python -m pip install -r requirements.txt
-```
-
-The backend dependencies include FastAPI, Uvicorn, PyMuPDF, and `python-multipart`.
-
-### 4. Start the backend
-
-From the repository root:
-
-```powershell
-python -m uvicorn backend.app.main:app --reload
-```
-
-The backend should be available at:
-
-- Application: http://127.0.0.1:8000
-- Interactive API documentation: http://127.0.0.1:8000/docs
-- Health check: http://127.0.0.1:8000/health
-
-### 5. Start the frontend
-
-Open a second terminal:
-
-```powershell
-cd frontend
-npm install
-npm run dev
-```
-
-Open the local development URL printed by Vite, commonly:
-
-http://localhost:5173
-
-If the frontend cannot communicate with the backend, check the API base URL and ensure the backend's CORS configuration permits the frontend development origin.
+The comparison module uses textual similarity and sequence comparison to identify changed blocks. `total_changes` represents detected change blocks, not the number of legal obligations affected.
 
 ---
 
 ## Testing
 
-### Test the document comparison module
+### Test the comparison module
 
-From the repository root, run:
+From the repository root:
 
 ```powershell
 python test_document_comparison.py
 ```
 
-The test script compares sample document versions and prints the detected changes.
-
 ### Test the API
 
-1. Start the FastAPI backend.
-2. Open http://127.0.0.1:8000/docs.
+1. Start the FastAPI server.
+2. Open `http://127.0.0.1:8000/docs`.
 3. Test `GET /health`.
-4. Test `POST /documents/compare` with sample text.
-5. Test PDF extraction with a readable, text-based PDF.
-6. Confirm that uploaded documents can be listed and retrieved.
+4. Upload a readable PDF through `POST /documents/extract`.
+5. Verify document listing and retrieval.
+6. Submit sample text to `POST /documents/compare`.
 
-PDF extraction and document comparison should be tested independently before relying on their integration in the frontend.
+Test the backend endpoints independently before relying on their integration with the dashboard.
 
 ---
 
 ## Current Limitations
 
-RegulaLens AI is an evolving project. The following limitations are important:
+RegulaLens AI is an evolving project. Current limitations include:
 
-- Scanned PDFs are not processed using OCR yet.
-- Document comparison currently operates on supplied text rather than automatically retrieving two stored document versions.
-- Textual differences are not necessarily equivalent to changes in regulatory meaning.
-- The comparison engine does not yet provide semantic analysis or regulatory impact assessments.
-- Citation-backed RAG question answering has not yet been implemented.
-- Automated RBI/SEBI circular monitoring is planned, not currently implemented.
-- Frontend integration of the comparison API and AI analysis features remains ongoing.
-
----
+- Scanned PDFs requiring OCR are not yet supported by a dedicated OCR pipeline.
+- Document comparison works on supplied text rather than automatically comparing stored versions by document ID.
+- Textual changes are not necessarily changes in regulatory meaning.
+- The dashboard's comparison interface still needs to be aligned with the comparison API.
+- The Ask RegulaLens interface is a scaffold; a complete RAG pipeline and question-answering backend are not yet implemented.
+- Impact Analysis currently captures input but does not generate an evidence-backed compliance assessment.
+- Automated monitoring of RBI, SEBI, or other regulatory sources is not yet implemented.
+- Authentication, access controls, and production deployment require further work.
 
 ## Roadmap
 
-### Phase 1 — Document Ingestion and Storage
+### Phase 1 — Document ingestion and persistence
 
 - [x] FastAPI application setup
 - [x] PDF upload and validation
-- [x] Page-by-page text extraction
-- [x] SQLite document storage
+- [x] Page-level text extraction
+- [x] SQLite persistence
 - [x] Document listing and retrieval endpoints
 
-### Phase 2 — Document Comparison
+### Phase 2 — Comparison and dashboard integration
 
 - [x] Standalone text comparison module
 - [x] Detect inserted, deleted, and replaced text blocks
-- [x] FastAPI endpoint for comparing supplied text
+- [x] Comparison API
 - [x] Basic comparison test script
-- [ ] Compare two stored documents by database ID
+- [ ] Compare stored document versions by ID
+- [ ] Integrate the comparison workflow with the dashboard
 - [ ] Improve change grouping and reporting
-- [ ] Integrate comparison results into the React dashboard
 
 ### Phase 3 — Retrieval-Augmented Generation
 
-- [ ] Text chunking with page-level metadata
-- [ ] Generate embeddings for document chunks
-- [ ] Add vector search using Chroma or a suitable alternative
-- [ ] Answer questions using retrieved regulatory passages
-- [ ] Provide source-document and page citations
-- [ ] Evaluate answer relevance and grounding
+- [ ] Chunk extracted text with page-level metadata
+- [ ] Generate embeddings for document passages
+- [ ] Implement vector search
+- [ ] Retrieve relevant passages for a user question
+- [ ] Generate source-grounded answers
+- [ ] Return document and page references
+- [ ] Evaluate retrieval quality and answer grounding
 
-### Phase 4 — Regulatory Intelligence
+### Phase 4 — Regulatory intelligence
 
-- [ ] Compare related circular versions automatically
+- [ ] Compare related circular versions
 - [ ] Explain the significance of detected changes
-- [ ] Identify potentially affected compliance requirements
-- [ ] Generate evidence-backed review suggestions
-- [ ] Keep human review in the decision-making process
+- [ ] Identify potentially affected requirements
+- [ ] Produce evidence-backed review suggestions
+- [ ] Keep human verification in the workflow
 
-### Phase 5 — Monitoring and Deployment
+### Phase 5 — Monitoring and deployment
 
-- [ ] Integrate reliable sources of public regulatory documents
-- [ ] Add document version tracking
-- [ ] Build automated change-monitoring workflows
+- [ ] Integrate reliable public regulatory sources
+- [ ] Track document versions and publication dates
+- [ ] Automate change-monitoring workflows
 - [ ] Add authentication and access controls
-- [ ] Add comprehensive automated tests
+- [ ] Expand automated test coverage
 - [ ] Deploy the application
-
----
-
-## Future Enhancements
-
-Potential future improvements include:
-
-- **Semantic comparison:** Identify changes in meaning rather than only matching text lines.
-- **Citation-backed answers:** Link generated answers to the specific source pages and passages.
-- **Regulatory impact analysis:** Highlight requirements that may need further compliance review.
-- **Document version history:** Maintain a structured history of related documents.
-- **OCR support:** Extract text from scanned PDFs.
-- **Automated monitoring:** Track new or revised public regulatory documents.
-- **Auditability:** Preserve evidence and document references for human review.
-
-These capabilities will be developed and tested incrementally.
 
 ---
 
 ## Contributing
 
-Contributions, suggestions, and bug reports are welcome.
-
-To contribute:
+Suggestions, bug reports, and contributions are welcome.
 
 1. Fork the repository.
 2. Create a feature branch.
 3. Make a focused change.
 4. Run the relevant tests.
-5. Submit a pull request describing the change.
-
-Example:
+5. Submit a pull request with a clear description.
 
 ```bash
 git checkout -b feature/your-feature
@@ -502,14 +482,14 @@ git commit -m "Describe your change"
 git push origin feature/your-feature
 ```
 
-Please avoid committing virtual environments, secrets, local databases containing sensitive data, or generated files.
-
----
+Do not commit credentials, virtual environments, or confidential document data.
 
 ## Disclaimer
 
-RegulaLens AI is a software development project intended to assist with regulatory document analysis.
+RegulaLens AI is a software development project intended to assist with regulatory document processing and analysis. It is not an official regulatory platform, legal advice, or a compliance certification system.
 
-It is not an official regulatory platform and does not replace legal, compliance, or professional judgment. Any future AI-generated analysis must be verified against the original regulatory documents and applicable requirements.
+Any future AI-generated findings should be verified against the original regulatory documents and reviewed by qualified professionals before being used for compliance decisions.
 
-**Built as an ongoing project exploring document processing, backend engineering, regulatory intelligence, and AI-powered retrieval.**
+---
+
+**Built with React, FastAPI, Python, and a focus on evidence-grounded regulatory intelligence.**
