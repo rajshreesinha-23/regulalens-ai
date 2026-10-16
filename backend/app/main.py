@@ -3,6 +3,8 @@ import json
 
 import fitz
 from fastapi import FastAPI, UploadFile, File, HTTPException
+from pydantic import BaseModel
+
 from backend.app.document_comparison import compare_documents
 from backend.app.database import get_connection
 
@@ -50,7 +52,7 @@ def save_document(filename, pages):
 
 @app.post("/documents/extract")
 async def extract_pdf(file: UploadFile = File(...)):
-    """Upload a PDF, extract its text, and save it."""
+    """Validate a PDF, extract page text, and save it."""
 
     if not file.filename or not file.filename.lower().endswith(".pdf"):
         raise HTTPException(
@@ -59,6 +61,7 @@ async def extract_pdf(file: UploadFile = File(...)):
         )
 
     try:
+        # Read one byte beyond the limit to detect oversized uploads.
         pdf_bytes = await file.read(MAX_PDF_SIZE + 1)
 
         if not pdf_bytes:
@@ -73,16 +76,17 @@ async def extract_pdf(file: UploadFile = File(...)):
                 detail="PDF size must not exceed 10 MB."
             )
 
+        # Validate the actual PDF content.
         try:
             document = fitz.open(
                 stream=pdf_bytes,
                 filetype="pdf"
             )
-        except Exception:
+        except Exception as exc:
             raise HTTPException(
                 status_code=400,
                 detail="The file is not a valid, readable PDF."
-            )
+            ) from exc
 
         try:
             if document.is_encrypted:
@@ -93,13 +97,20 @@ async def extract_pdf(file: UploadFile = File(...)):
 
             pages = []
 
-            for page_index, page in enumerate(document):
-                text = page.get_text("text")
+            try:
+                for page_index, page in enumerate(document):
+                    extracted_text = page.get_text("text")
 
-                pages.append({
-                    "page_number": page_index + 1,
-                    "text": text.strip()
-                })
+                    pages.append({
+                        "page_number": page_index + 1,
+                        "text": extracted_text.strip()
+                    })
+
+            except Exception as exc:
+                raise HTTPException(
+                    status_code=422,
+                    detail="Text extraction failed for this PDF."
+                ) from exc
 
             if not any(page["text"] for page in pages):
                 raise HTTPException(
@@ -110,6 +121,7 @@ async def extract_pdf(file: UploadFile = File(...)):
                     )
                 )
 
+            # Save only after successful text extraction.
             document_id = save_document(file.filename, pages)
 
             return {
@@ -174,8 +186,6 @@ def get_document(document_id: int):
         "pages": json.loads(row["pages_json"])
     }
 
-from pydantic import BaseModel
-
 
 class CompareDocumentsRequest(BaseModel):
     old_text: str
@@ -184,6 +194,8 @@ class CompareDocumentsRequest(BaseModel):
 
 @app.post("/documents/compare")
 def compare_document_versions(request: CompareDocumentsRequest):
+    """Compare two versions of a regulatory document."""
+
     if not request.old_text.strip() or not request.new_text.strip():
         raise HTTPException(
             status_code=400,
