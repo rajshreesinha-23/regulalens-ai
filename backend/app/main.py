@@ -28,6 +28,7 @@ def home():
 
 @app.get("/health")
 def health_check():
+    """Check whether the API is running."""
     return {"status": "healthy"}
 
 
@@ -95,24 +96,20 @@ async def extract_pdf(file: UploadFile = File(...)):
                     detail="Password-protected PDFs are not supported."
                 )
 
-          pages = []
+            pages = []
 
-try:
-    for page_index, page in enumerate(document):
-        extracted_text = page.get_text("text").strip()
+            # Extract text page by page and preserve page metadata.
+            try:
+                for page_index, page in enumerate(document):
+                    extracted_text = page.get_text("text").strip()
 
-        pages.append({
-            "page_number": page_index + 1,
-            "text": extracted_text,
-            "character_count": len(extracted_text),
-            "word_count": len(extracted_text.split())
-        })
+                    pages.append({
+                        "page_number": page_index + 1,
+                        "text": extracted_text,
+                        "character_count": len(extracted_text),
+                        "word_count": len(extracted_text.split())
+                    })
 
-except Exception as exc:
-    raise HTTPException(
-        status_code=422,
-        detail="Text extraction failed for this PDF."
-    ) from exc
             except Exception as exc:
                 raise HTTPException(
                     status_code=422,
