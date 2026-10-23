@@ -5,3 +5,9 @@ __pycache__/
 .env
 .vscode/
 .pytest_cache/
+# Local SQLite databases
+backend/app/regulalens.db
+backend/app/regulalens.backup.db
+backend/app/regulalens.db-journal
+backend/app/regulalens.db-shm
+backend/app/regulalens.db-wal
