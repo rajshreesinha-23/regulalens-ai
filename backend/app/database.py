@@ -1,8 +1,14 @@
-
+import os
 import sqlite3
 from pathlib import Path
 
-DATABASE_PATH = Path(__file__).resolve().parent / "regulalens.db"
+DEFAULT_DATABASE_PATH = Path(__file__).resolve().parent / "regulalens.db"
+
+DATABASE_PATH = Path(
+    os.getenv("REGULALENS_DB_PATH", str(DEFAULT_DATABASE_PATH))
+)
+
+DATABASE_PATH.parent.mkdir(parents=True, exist_ok=True)
 
 
 def get_connection():
