@@ -1,10 +1,10 @@
 
 import json
+from fastapi.middleware.cors import CORSMiddleware
 
 import fitz
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from pydantic import BaseModel
-from fastapi.middleware.cors import CORSMiddleware
 from backend.app.document_comparison import compare_documents
 from backend.app.database import get_connection
 
@@ -17,6 +17,8 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
         "http://localhost:3000",
         "http://127.0.0.1:3000",
     ],
