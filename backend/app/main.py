@@ -4,15 +4,25 @@ import json
 import fitz
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from pydantic import BaseModel
-
+from fastapi.middleware.cors import CORSMiddleware
 from backend.app.document_comparison import compare_documents
 from backend.app.database import get_connection
-
 
 app = FastAPI(
     title="RegulaLens AI",
     description="Regulatory intelligence and software impact analysis",
     version="0.2.0"
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 MAX_PDF_SIZE = 10 * 1024 * 1024  # 10 MB
@@ -192,21 +202,74 @@ def get_document(document_id: int):
 
 
 class CompareDocumentsRequest(BaseModel):
-    old_text: str
-    new_text: str
+    old_document_id: int
+    new_document_id: int
 
 
 @app.post("/documents/compare")
 def compare_document_versions(request: CompareDocumentsRequest):
-    """Compare two versions of a regulatory document."""
+    """Compare two saved document versions."""
 
-    if not request.old_text.strip() or not request.new_text.strip():
+    if request.old_document_id == request.new_document_id:
         raise HTTPException(
             status_code=400,
-            detail="Both document versions must contain text."
+            detail="Please select two different documents."
         )
 
-    return compare_documents(
-        request.old_text,
-        request.new_text
-    )
+    with get_connection() as connection:
+        old_document = connection.execute(
+            """
+            SELECT id, filename, pages_json
+            FROM documents
+            WHERE id = ?
+            """,
+            (request.old_document_id,)
+        ).fetchone()
+
+        new_document = connection.execute(
+            """
+            SELECT id, filename, pages_json
+            FROM documents
+            WHERE id = ?
+            """,
+            (request.new_document_id,)
+        ).fetchone()
+
+    if old_document is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Baseline document not found."
+        )
+
+    if new_document is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Document to compare was not found."
+        )
+
+    old_pages = json.loads(old_document["pages_json"])
+    new_pages = json.loads(new_document["pages_json"])
+
+    old_text = "\n".join(
+        page["text"] for page in old_pages
+    ).strip()
+
+    new_text = "\n".join(
+        page["text"] for page in new_pages
+    ).strip()
+
+    if not old_text or not new_text:
+        raise HTTPException(
+            status_code=400,
+            detail="Both documents must contain readable text."
+        )
+
+    result = compare_documents(old_text, new_text)
+
+    return {
+        "old_document_id": old_document["id"],
+        "old_filename": old_document["filename"],
+        "new_document_id": new_document["id"],
+        "new_filename": new_document["filename"],
+        "comparison": result
+    }
