@@ -11,3 +11,6 @@ backend/app/regulalens.backup.db
 backend/app/regulalens.db-journal
 backend/app/regulalens.db-shm
 backend/app/regulalens.db-wal
+venv/
+*.backup
+node_modules/

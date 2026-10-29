@@ -1,9 +1,11 @@
-
 import json
-from fastapi.middleware.cors import CORSMiddleware
+import os
+from typing import Optional
 
 import fitz
 from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from google.genai import errors as genai_errors
 from pydantic import BaseModel
 from backend.app.document_comparison import compare_documents
 from backend.app.database import get_connection
@@ -274,4 +276,79 @@ def compare_document_versions(request: CompareDocumentsRequest):
         "new_document_id": new_document["id"],
         "new_filename": new_document["filename"],
         "comparison": result
+    }
+class AskRequest(BaseModel):
+    question: str
+    document_ids: Optional[list[int]] = None  # None = search all documents
+    top_k: int = 5
+
+
+@app.post("/ask")
+def ask_question(request: AskRequest):
+    """Answer a question from saved documents, with page-level citations."""
+
+    question = request.question.strip()
+
+    if not question:
+        raise HTTPException(status_code=400, detail="Please enter a question.")
+
+    if len(question) > 1000:
+        raise HTTPException(status_code=400, detail="Question is too long.")
+
+    if not 1 <= request.top_k <= 10:
+        raise HTTPException(status_code=400, detail="top_k must be between 1 and 10.")
+
+    if not os.getenv("ANTHROPIC_API_KEY"):
+        raise HTTPException(
+            status_code=503,
+            detail="ANTHROPIC_API_KEY is not configured on the server."
+        )
+
+    with get_connection() as connection:
+        if request.document_ids:
+            placeholders = ",".join("?" * len(request.document_ids))
+            rows = connection.execute(
+                f"SELECT id, filename, pages_json FROM documents WHERE id IN ({placeholders})",
+                request.document_ids
+            ).fetchall()
+        else:
+            rows = connection.execute(
+                "SELECT id, filename, pages_json FROM documents"
+            ).fetchall()
+
+    if not rows:
+        raise HTTPException(status_code=404, detail="No documents found to search.")
+
+    documents = [
+        {"id": r["id"], "filename": r["filename"], "pages": json.loads(r["pages_json"])}
+        for r in rows
+    ]
+
+    passages = search(build_chunks(documents), question, top_k=request.top_k)
+
+    if not passages:
+        return {
+            "question": question,
+            "answer": "I couldn't find anything relevant to that question in the selected documents.",
+            "citations": [],
+            "passages": []
+        }
+
+    try:
+        answer, cited = answer_question(question, passages)
+    except anthropic.APIError as exc:
+        raise HTTPException(
+            status_code=502,
+            detail="The AI service failed to answer. Please try again."
+        ) from exc
+
+    return {
+        "question": question,
+        "answer": answer,
+        "citations": [
+            {"number": n, **{k: passages[n - 1][k] for k in
+                ("document_id", "filename", "page_number", "text")}}
+            for n in cited
+        ],
+        "passages": passages
     }
