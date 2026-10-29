@@ -1,138 +1,138 @@
 # RegulaLens AI
-
 ### AI-Powered Regulatory Intelligence & Software Impact Analysis
 
-**Turning complex regulatory documents into structured, actionable intelligence.**
+**Turn regulatory PDFs into structured, comparable, and searchable intelligence.**
 
-RegulaLens AI is a regulatory document intelligence platform built to process PDFs, extract page-aware text, compare regulatory documents, and provide a foundation for AI-assisted compliance workflows.
+RegulaLens AI helps users extract regulatory documents, compare versions, and retrieve relevant passages for AI-assisted question answering.
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Python-Backend-blue?logo=python" alt="Python"/>
-  <img src="https://img.shields.io/badge/FastAPI-REST%20API-009688?logo=fastapi" alt="FastAPI"/>
-  <img src="https://img.shields.io/badge/React-Frontend-61DAFB?logo=react" alt="React"/>
-  <img src="https://img.shields.io/badge/Docker-Containerized-2496ED?logo=docker" alt="Docker"/>
+  <img src="https://img.shields.io/badge/Python-FastAPI-blue?logo=python" alt="Python/FastAPI"/>
+  <img src="https://img.shields.io/badge/React-Vite-61DAFB?logo=react" alt="React/Vite"/>
   <img src="https://img.shields.io/badge/Database-SQLite-003B57?logo=sqlite" alt="SQLite"/>
+  <img src="https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker" alt="Docker"/>
 </p>
 
 ---
 
-## 🧭 Project Overview
+## 🔍 How It Works
 
 ```mermaid
 flowchart TD
-    A["📄 Regulatory PDFs"] --> B["📥 Document Ingestion"]
-    B --> C["🔎 Text Extraction"]
-    C --> D["🗂️ Structured Document Storage"]
-    D --> E["🔄 Document Comparison"]
-    E --> F["📊 Change Review"]
-    F --> G["🎯 Foundation for Impact Analysis"]
+    A[Regulatory PDF] --> B[Validate File]
+    B --> C[Extract Text by Page]
+    C --> D[(Store in SQLite)]
+    D --> E[Browse Documents]
+    D --> F[Compare Versions]
+    D --> G[Retrieve Relevant Passages]
+    G --> H[AI Answer + Citations]
+    F --> I[Review Changes]
+    H --> J[Future: Impact Analysis]
+    I --> J
 
-    style A fill:#EAF2FF,stroke:#2563EB,color:#172554
-    style B fill:#EAF2FF,stroke:#2563EB,color:#172554
-    style C fill:#EAF2FF,stroke:#2563EB,color:#172554
-    style D fill:#EAF2FF,stroke:#2563EB,color:#172554
-    style E fill:#D1FAE5,stroke:#059669,color:#064E3B
-    style F fill:#D1FAE5,stroke:#059669,color:#064E3B
-    style G fill:#F3E8FF,stroke:#9333EA,color:#581C87
+    style A fill:#dbeafe,stroke:#2563eb,color:#172554
+    style D fill:#dcfce7,stroke:#16a34a,color:#14532d
+    style H fill:#f3e8ff,stroke:#9333ea,color:#581c87
 ```
 
-## ✨ Core Capabilities
-
-| Capability | Description | Status |
-|---|---|---|
-| 📄 PDF ingestion | Upload regulatory documents through the API | Implemented |
-| 🔎 Text extraction | Extract page-aware text with PyMuPDF | Implemented |
-| 🗃️ Document storage | Store metadata and extracted content in SQLite | Implemented |
-| 🔄 Document comparison | Identify inserted, deleted, and replaced text | Implemented |
-| 🖥️ Web dashboard | React/Vite frontend for document workflows | Implemented |
-| 🐳 Docker deployment | Run frontend and backend with Docker Compose | Configured |
-| 🧠 RAG question answering | Retrieve relevant passages for grounded answers | Planned |
-| 🎯 Automated impact analysis | Map regulatory changes to affected systems | Planned |
-
-## 🏛️ System Architecture
+## 🏗️ System Architecture
 
 ```mermaid
 flowchart TB
-    U["👤 User"]
+    U[User] --> FE[React Dashboard]
+    FE --> API[FastAPI REST API]
 
-    subgraph FRONTEND["Presentation Layer"]
-        R["React + Vite"]
-        N["Nginx Web Server"]
-        R --> N
-    end
+    API --> PDF[PyMuPDF Extraction]
+    API --> CMP[Document Comparison]
+    API --> QA[Passage Retrieval and Q&A]
 
-    subgraph BACKEND["Application Layer"]
-        API["FastAPI REST API"]
-        PDF["PyMuPDF Extraction"]
-        CMP["Document Comparison"]
-        DB["SQLite Database"]
-        API --> PDF
-        API --> CMP
-        API --> DB
-    end
+    PDF --> DB[(SQLite Database)]
+    CMP --> DB
+    QA --> DB
 
-    VOL[("Docker Persistent Volume")]
+    QA -. API Key Required .-> AI[Anthropic API]
 
-    U --> N
-    N --> API
-    DB --- VOL
-
-    style FRONTEND fill:#EFF6FF,stroke:#2563EB,color:#172554
-    style BACKEND fill:#ECFDF5,stroke:#059669,color:#064E3B
-    style VOL fill:#F3E8FF,stroke:#9333EA,color:#581C87
+    style FE fill:#dbeafe,stroke:#2563eb,color:#172554
+    style API fill:#dcfce7,stroke:#16a34a,color:#14532d
+    style DB fill:#fef3c7,stroke:#d97706,color:#78350f
 ```
 
-**Architecture at a glance**
+## ⚙️ Core Workflows
 
-- **Frontend:** React and Vite, served through Nginx.
-- **Backend:** FastAPI exposes document processing and comparison endpoints.
-- **Processing:** PyMuPDF extracts PDF text while retaining page information.
-- **Storage:** SQLite stores document records and extracted content.
-- **Infrastructure:** Docker Compose coordinates the frontend and backend services.
-
-## 🔁 Document Processing Workflow
+### 1. PDF Ingestion
 
 ```mermaid
 sequenceDiagram
     actor User
-    participant UI as React Dashboard
+    participant UI as Dashboard
     participant API as FastAPI
     participant PDF as PyMuPDF
     participant DB as SQLite
 
     User->>UI: Upload PDF
-    UI->>API: Send document
-    API->>API: Validate file
+    UI->>API: POST /documents/extract
+    API->>API: Validate size and readability
     API->>PDF: Extract page text
-    PDF-->>API: Text + page information
-    API->>DB: Store document record
-    DB-->>API: Stored document
-    API-->>UI: Return extraction result
-    UI-->>User: Display document status
+    PDF-->>API: Text and page metadata
+    API->>DB: Save document
+    API-->>UI: Document ID and status
 ```
 
-## 🧰 Technology Stack
+### 2. Regulatory Version Comparison
 
 ```mermaid
 flowchart LR
-    A["Frontend<br/>React · Vite · JavaScript"]
-    B["Backend<br/>Python · FastAPI · Uvicorn"]
-    C["Processing<br/>PyMuPDF · difflib"]
-    D["Storage<br/>SQLite · Docker Volume"]
-    E["Infrastructure<br/>Docker · Compose · Nginx"]
+    A[Baseline Document] --> C[Load Extracted Text]
+    B[New Document Version] --> C
+    C --> D[Compare Text]
+    D --> E[Identify Changes]
+    E --> F[Review Differences]
 
-    A --> B --> C
-    B --> D
-    A -. served by .-> E
-
-    style A fill:#DBEAFE,stroke:#2563EB,color:#172554
-    style B fill:#D1FAE5,stroke:#059669,color:#064E3B
-    style C fill:#FEF3C7,stroke:#D97706,color:#78350F
-    style D fill:#F3E8FF,stroke:#9333EA,color:#581C87
-    style E fill:#E5E7EB,stroke:#6B7280,color:#111827
+    style A fill:#dbeafe,stroke:#2563eb,color:#172554
+    style B fill:#dbeafe,stroke:#2563eb,color:#172554
+    style E fill:#dcfce7,stroke:#16a34a,color:#14532d
 ```
 
-## 🚀 Run Locally with Docker
+### 3. AI-Powered Document Q&A
+
+```mermaid
+flowchart TD
+    A[User Question] --> B[Select Documents]
+    B --> C[Retrieve Relevant Passages]
+    C --> D[Generate Answer]
+    D --> E[Return Answer and Page Citations]
+    E --> F[User Verifies Source]
+
+    D -. Requires .-> G[Anthropic API]
+
+    style C fill:#dbeafe,stroke:#2563eb,color:#172554
+    style E fill:#dcfce7,stroke:#16a34a,color:#14532d
+```
+
+## ✨ Features
+
+| Feature | Status |
+|---|---|
+| PDF upload and validation | Implemented |
+| Page-wise text extraction | Implemented |
+| SQLite document storage | Implemented |
+| Document version comparison | Implemented |
+| React dashboard | Implemented; evolving |
+| AI Q&A with citation data | Backend available; API key required |
+| OCR for scanned PDFs | Planned |
+| Automated software impact analysis | Planned |
+| Regulatory monitoring and alerts | Planned |
+
+## 🛠️ Technology Stack
+
+- **Frontend:** React, Vite, JavaScript
+- **Backend:** Python, FastAPI, Uvicorn
+- **PDF Processing:** PyMuPDF
+- **Comparison:** Python text-difference utilities
+- **Database:** SQLite
+- **AI Integration:** Anthropic API
+- **Deployment:** Docker Compose, Nginx
+
+## 🚀 Getting Started
 
 ### Prerequisites
 
@@ -140,103 +140,80 @@ flowchart LR
 - Docker Desktop
 - Docker Compose
 
-### 1. Clone the repository
+### Installation
 
 ```bash
 git clone https://github.com/rajshreesinha-23/regulalens-ai.git
 cd regulalens-ai
-```
-
-### 2. Start the application
-
-```bash
 docker compose up --build -d
 ```
 
-### 3. Access the services
+### Application URLs
 
 | Service | URL |
 |---|---|
-| Frontend Dashboard | [localhost:3000](http://localhost:3000) |
-| Backend API | [localhost:8000](http://localhost:8000) |
-| Swagger API Docs | [localhost:8000/docs](http://localhost:8000/docs) |
-| Health Check | [localhost:8000/health](http://localhost:8000/health) |
+| Dashboard | http://localhost:3000 |
+| Backend API | http://localhost:8000 |
+| Swagger API Docs | http://localhost:8000/docs |
+| Health Check | http://localhost:8000/health |
 
-### 4. Useful commands
+### Useful Commands
 
 ```bash
-# Check running services
 docker compose ps
-
-# Follow application logs
 docker compose logs -f
-
-# Stop services; keep named volumes
 docker compose down
-
-# Rebuild and restart after code changes
 docker compose up --build -d
 ```
 
-## 🗺️ Roadmap
+## 🔌 API Endpoints
+
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/health` | Check API health |
+| POST | `/documents/extract` | Upload and extract a PDF |
+| GET | `/documents` | List saved documents |
+| GET | `/documents/{document_id}` | Retrieve a document |
+| POST | `/documents/compare` | Compare two document versions |
+| POST | `/ask` | Ask questions about saved documents |
+
+Explore the endpoints at **http://localhost:8000/docs** after starting the application.
+
+**AI configuration:** Set `ANTHROPIC_API_KEY` in the backend environment to enable AI-generated answers. Never commit API keys or other secrets to GitHub.
+
+## 🗺️ Project Roadmap
 
 ```mermaid
 flowchart LR
-    A["✅ PDF Ingestion"] --> B["✅ Extraction & Storage"]
-    B --> C["✅ Text Comparison"]
-    C --> D["✅ Docker Setup"]
-    D --> E["🔜 Retrieval-Augmented Generation"]
-    E --> F["🔜 Citation-Grounded Answers"]
-    F --> G["🔜 Regulatory Impact Mapping"]
-    G --> H["🔜 Monitoring & Alerts"]
+    A[PDF Ingestion] --> B[Document Storage]
+    B --> C[Version Comparison]
+    C --> D[Improve Q&A Workflow]
+    D --> E[OCR Support]
+    E --> F[Software Impact Analysis]
+    F --> G[Regulatory Monitoring]
 
-    style A fill:#D1FAE5,stroke:#059669,color:#064E3B
-    style B fill:#D1FAE5,stroke:#059669,color:#064E3B
-    style C fill:#D1FAE5,stroke:#059669,color:#064E3B
-    style D fill:#D1FAE5,stroke:#059669,color:#064E3B
-    style E fill:#DBEAFE,stroke:#2563EB,color:#172554
-    style F fill:#DBEAFE,stroke:#2563EB,color:#172554
-    style G fill:#F3E8FF,stroke:#9333EA,color:#581C87
-    style H fill:#F3E8FF,stroke:#9333EA,color:#581C87
+    style A fill:#dcfce7,stroke:#16a34a,color:#14532d
+    style B fill:#dcfce7,stroke:#16a34a,color:#14532d
+    style C fill:#dcfce7,stroke:#16a34a,color:#14532d
+    style D fill:#dbeafe,stroke:#2563eb,color:#172554
+    style E fill:#f3e8ff,stroke:#9333ea,color:#581c87
+    style F fill:#f3e8ff,stroke:#9333ea,color:#581c87
 ```
 
-*The roadmap distinguishes existing functionality from planned AI capabilities.*
+## ⚠️ Limitations
 
-## 📁 Repository Structure
+- Maximum PDF upload size: **10 MB**.
+- Scanned PDFs may require OCR, which is not yet implemented.
+- AI question answering requires a valid Anthropic API key and external service availability.
+- Text comparison identifies differences but does not independently determine their legal significance.
+- Automated software impact analysis remains a future development goal.
 
-```text
-regulalens-ai/
-├── backend/
-│   ├── app/
-│   │   ├── main.py
-│   │   ├── database.py
-│   │   ├── document_chunker.py
-│   │   ├── document_comparator.py
-│   │   └── ...
-│   └── tests/
-├── frontend/
-│   ├── public/
-│   ├── src/
-│   ├── Dockerfile
-│   ├── nginx.conf
-│   ├── package.json
-│   └── vite.config.js
-├── docs/
-├── sample_data/
-├── Dockerfile.backend
-├── docker-compose.yml
-├── requirements.txt
-└── README.md
-```
-
-## 🎯 Project Vision
-
-RegulaLens AI is being developed to bridge regulatory document processing with software impact analysis. Its foundation combines structured extraction, persistent storage, and document comparison, with future work focused on retrieval-augmented generation, source-grounded answers, and more automated regulatory intelligence.
+RegulaLens AI is a development project and does not replace professional legal or regulatory review. Always verify important conclusions against the original documents.
 
 ## 🤝 Contributing
 
-Suggestions, issues, and contributions are welcome. Fork the repository, create a feature branch, and submit a pull request with a clear description of your changes.
+Contributions and suggestions are welcome. Fork the repository, create a feature branch, test your changes, and submit a pull request describing your contribution.
 
 ## 📄 License
 
-A license will be specified when one is selected for the repository.
+No license is currently specified for this repository.
