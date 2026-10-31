@@ -107,3 +107,48 @@ blockquote span{color:var(--mute)}
   .stage{height:380vh}
 }
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition:none!important;scroll-behavior:auto!important}.clause ins{opacity:1}}
+
+/* ---- advanced landing ---- */
+.nav .links{display:flex;gap:28px;font-size:14px;color:var(--mute)}
+.nav .links a:hover{color:var(--fg)}
+.heroWrap{position:relative;overflow:hidden;--mx:50%;--my:30%}
+.heroWrap::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(520px circle at var(--mx) var(--my),#ffffff1c,transparent 60%),linear-gradient(#ffffff0e 1px,transparent 1px) 0 0/56px 56px,linear-gradient(90deg,#ffffff0e 1px,transparent 1px) 0 0/56px 56px;-webkit-mask-image:radial-gradient(ellipse at 50% 40%,#000 25%,transparent 75%);mask-image:radial-gradient(ellipse at 50% 40%,#000 25%,transparent 75%)}
+.hero{position:relative;display:grid;grid-template-columns:1.1fr .9fr;gap:56px;align-items:center;max-width:1200px}
+.doc{border:1px solid #333;border-radius:14px;background:#050505;box-shadow:0 30px 90px #ffffff12;transform:perspective(900px) rotateY(-7deg) rotateX(3deg);animation:float 6s ease-in-out infinite}
+@keyframes float{50%{transform:perspective(900px) rotateY(-7deg) rotateX(3deg) translateY(-12px)}}
+.doc-bar{display:flex;gap:6px;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line);color:var(--mute);font-size:13px}
+.doc-bar i{width:9px;height:9px;border-radius:50%;background:#333}.doc-bar span{margin-left:8px}
+.doc-body{padding:24px}.doc-body small{color:var(--mute)}
+.doc .clause{margin:10px 0 20px;font-size:clamp(20px,2.2vw,28px)}
+.ghost{height:8px;border-radius:4px;background:#1a1a1a;margin:10px 0}.ghost.s{width:60%}
+.tag{display:inline-block;margin-top:14px;padding:4px 12px;border:1px solid var(--fg);border-radius:999px;font-size:12px}
+.mq{overflow:hidden;border-block:1px solid var(--line);padding:16px 0;color:var(--mute);font-size:15px}
+.mq div{display:flex;gap:48px;width:max-content;animation:mq 34s linear infinite}
+@keyframes mq{to{transform:translateX(-50%)}}
+[data-r]{opacity:0;transform:translateY(24px);transition:opacity .7s var(--d,0ms),transform .7s var(--d,0ms)}
+[data-r].in{opacity:1;transform:none}
+.sec{max-width:1100px;margin:0 auto;padding:90px clamp(20px,5vw,56px) 0}
+.sec h2{margin-top:0}
+.pipe{display:grid;grid-template-columns:repeat(7,1fr);gap:14px;margin-top:30px}
+.node{padding:16px 4px 0;border-top:2px solid var(--fg);font-size:15px}
+.node small{display:block;color:var(--mute);margin-bottom:6px}
+.node.plan{border-top:2px dashed #555;color:var(--mute)}
+.bento{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-top:28px}
+.cap{--x:50%;--y:50%;position:relative;overflow:hidden;grid-column:span 2;padding:26px;min-height:190px;border:1px solid var(--line);border-radius:16px;transition:border-color .3s,opacity .7s var(--d,0ms),transform .7s var(--d,0ms)}
+.cap:nth-child(1),.cap:nth-child(4){grid-column:span 3}
+.cap::before{content:"";position:absolute;inset:0;opacity:0;transition:opacity .3s;background:radial-gradient(260px circle at var(--x) var(--y),#ffffff18,transparent 70%)}
+.cap:hover{border-color:#666}.cap:hover::before{opacity:1}
+.cap h3{font:400 28px/1.1 var(--serif);margin:26px 0 8px;position:relative}.cap p{position:relative;margin:0}
+.st{font-size:12px;padding:3px 10px;border:1px solid #444;border-radius:999px;color:var(--mute);position:relative}
+.stack{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-top:24px}
+.stack div{padding:4px 0 4px 16px;border-left:2px solid var(--fg)}
+.stack small{display:block;color:var(--mute)}
+.final{margin-top:70px;padding-bottom:90px}
+/* ---- workspace motion ---- */
+.page{animation:enter .45s ease both}
+@keyframes enter{from{opacity:0;transform:translateY(10px)}}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
+.split p{margin:0;padding:12px;border-radius:8px;background:var(--hover);color:var(--fg);max-width:none}
+.split em{color:#666;font-style:normal}
+@media(max-width:860px){.hero{grid-template-columns:1fr;padding-top:110px}.doc{transform:none;animation:none}.nav .links{display:none}.pipe{grid-template-columns:repeat(2,1fr)}.bento{grid-template-columns:1fr}.cap,.cap:nth-child(1),.cap:nth-child(4){grid-column:auto}.split{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){[data-r]{opacity:1;transform:none}.doc,.mq div{animation:none}}

@@ -24,6 +24,19 @@ export default function App() {
 }
 
 /* ---------------- Landing ---------------- */
+const PIPE = [["Regulatory PDFs", 1], ["Ingestion", 1], ["Text extraction", 1], ["Storage", 1], ["Comparison", 1], ["Change review", 1], ["Impact analysis", 0]];
+const CAPS = [
+  ["PDF ingestion", "Upload regulatory documents and have them validated and read.", "Implemented"],
+  ["Page-aware extraction", "Text is read with PyMuPDF and keeps its page number.", "Implemented"],
+  ["Document storage", "Metadata and extracted content are stored in SQLite.", "Implemented"],
+  ["Document comparison", "Inserted, deleted and replaced text, shown as a redline.", "Implemented"],
+  ["Web dashboard", "A React and Vite workspace for every document workflow.", "Implemented"],
+  ["Docker deployment", "Frontend and backend start together with Docker Compose.", "Configured"],
+];
+const STACK = [["Frontend", "React, Vite"], ["Backend", "Python, FastAPI"], ["Processing", "PyMuPDF, difflib"], ["Storage", "SQLite"], ["Infrastructure", "Docker, Nginx"]];
+const MQ = ["Page-aware extraction", "Redline comparison", "Cited answers", "FastAPI", "React", "Docker", "SQLite", "PyMuPDF"];
+const glow = (e) => { const r = e.currentTarget.getBoundingClientRect(); e.currentTarget.style.setProperty("--x", `${e.clientX - r.left}px`); e.currentTarget.style.setProperty("--y", `${e.clientY - r.top}px`); };
+
 function Landing() {
   const stage = useRef(null);
   const [p, setP] = useState(0);
@@ -33,21 +46,38 @@ function Landing() {
       if (r) setP(Math.min(Math.max(-r.top / (r.height - innerHeight), 0), 0.999));
     };
     addEventListener("scroll", f, { passive: true }); f();
-    return () => removeEventListener("scroll", f);
+    const io = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && e.target.classList.add("in")), { threshold: 0.15 });
+    document.querySelectorAll("[data-r]").forEach((n) => io.observe(n));
+    return () => { removeEventListener("scroll", f); io.disconnect(); };
   }, []);
   const step = Math.floor(p * STEPS.length);
+  const spot = (e) => { e.currentTarget.style.setProperty("--mx", `${e.clientX}px`); e.currentTarget.style.setProperty("--my", `${e.clientY}px`); };
   return (
     <>
       <header className="nav">
         <a href="#" className="logo">RegulaLens</a>
+        <nav className="links"><a href="#how">How it works</a><a href="#pipe">Pipeline</a><a href="#caps">Capabilities</a><a href={REPO} target="_blank" rel="noreferrer">Source</a></nav>
         <a className="btn solid sm" href="#app/overview">Open workspace</a>
       </header>
-      <section className="hero">
-        <h1>Know what changed in the rulebook.</h1>
-        <p className="clause">Regulated entities must file the incident report within <s>30 days</s> <ins>15 days</ins> of detection.</p>
-        <p className="lede">RegulaLens reads regulatory PDFs, redlines the differences between versions, and answers questions with the exact page it found them on.</p>
-        <div className="cta"><a className="btn solid" href="#app/documents">Upload a PDF</a><a className="btn" href="#how">See how it works</a></div>
-      </section>
+      <div className="heroWrap" onMouseMove={spot}>
+        <section className="hero">
+          <div>
+            <h1>Know what changed in the rulebook.</h1>
+            <p className="lede">RegulaLens reads regulatory PDFs, redlines the differences between versions, and answers questions with the exact page it found them on.</p>
+            <div className="cta"><a className="btn solid" href="#app/documents">Upload a PDF</a><a className="btn" href="#how">See how it works</a></div>
+          </div>
+          <div className="doc" aria-hidden="true">
+            <div className="doc-bar"><i /><i /><i /><span>rbi_circular_2026.pdf</span></div>
+            <div className="doc-body">
+              <small>Page 14 of 48</small>
+              <p className="clause">Regulated entities must file the incident report within <s>30 days</s> <ins>15 days</ins> of detection.</p>
+              <div className="ghost" /><div className="ghost s" />
+              <span className="tag">1 change found</span>
+            </div>
+          </div>
+        </section>
+      </div>
+      <div className="mq" aria-hidden="true"><div>{[...MQ, ...MQ, ...MQ, ...MQ].map((x, i) => <span key={i}>{x}</span>)}</div></div>
       <section id="how" className="stage" ref={stage}>
         <div className="pin">
           <div className="rail"><i style={{ height: `${p * 100}%` }} /></div>
@@ -58,15 +88,39 @@ function Landing() {
           ))}
         </div>
       </section>
-      <section className="road">
-        <h2>What works today</h2>
-        <div className="chips">{LIVE.map((x) => <span key={x} className="chip on">{x}</span>)}</div>
-        <h2>What is planned</h2>
-        <div className="chips">{PLANNED.map((x) => <span key={x} className="chip">{x}</span>)}</div>
+      <section id="pipe" className="sec">
+        <h2 data-r>From PDF to reviewed change.</h2>
+        <p className="lede" data-r>Every document follows the same path. The last step is the next one being built.</p>
+        <div className="pipe">{PIPE.map(([t, on], i) => <div key={t} data-r style={{ "--d": `${i * 90}ms` }} className={`node ${on ? "" : "plan"}`}><small>{i + 1}</small>{t}</div>)}</div>
       </section>
-      <footer><span>Built with FastAPI, React, PyMuPDF, SQLite and Docker.</span><a href={REPO} target="_blank" rel="noreferrer">Source on GitHub</a></footer>
+      <section id="caps" className="sec">
+        <h2 data-r>What it does.</h2>
+        <div className="bento">{CAPS.map(([t, d, st], i) => (
+          <div key={t} data-r className="cap" style={{ "--d": `${i * 70}ms` }} onMouseMove={glow}>
+            <span className="st">{st}</span><h3>{t}</h3><p>{d}</p>
+          </div>))}
+        </div>
+      </section>
+      <section className="sec">
+        <h2 data-r>Built with.</h2>
+        <div className="stack">{STACK.map(([k, v], i) => <div key={k} data-r style={{ "--d": `${i * 70}ms` }}><small>{k}</small><b>{v}</b></div>)}</div>
+        <div className="cta final" data-r><a className="btn solid" href="#app/documents">Open the workspace</a><a className="btn" href={REPO} target="_blank" rel="noreferrer">Read the source</a></div>
+      </section>
+      <footer><span>Built with FastAPI, React, PyMuPDF, SQLite and Docker.</span><a href={REPO} target="_blank" rel="noreferrer">github.com/rajshreesinha-23/regulalens-ai</a></footer>
     </>
   );
+}
+
+function Num({ v }) {
+  const [n, setN] = useState(0);
+  useEffect(() => {
+    if (typeof v !== "number") return;
+    let r, t0;
+    const f = (t) => { t0 ??= t; const k = Math.min((t - t0) / 700, 1); setN(Math.round(v * k)); if (k < 1) r = requestAnimationFrame(f); };
+    r = requestAnimationFrame(f);
+    return () => cancelAnimationFrame(r);
+  }, [v]);
+  return typeof v === "number" ? n : v ?? "-";
 }
 
 /* ---------------- Workspace ---------------- */
@@ -93,7 +147,7 @@ function Workspace({ view }) {
       <main className="main">
         <div className="top"><button className="icon" onClick={() => setOpen(!open)} aria-label="Menu">Menu</button><span>Workspace / <b>{NAV.find(([k]) => k === view)?.[1] || "Overview"}</b></span></div>
         {toast && <div className="toast" role="alert">{toast}<button onClick={() => setToast("")}>Dismiss</button></div>}
-        <div className="page">
+        <div className="page" key={view}>
           {view === "documents" ? <Documents {...props} /> : view === "ask" ? <Ask {...props} /> : view === "compare" ? <Compare {...props} /> : <Overview {...props} online={online} />}
         </div>
       </main>
@@ -112,8 +166,8 @@ function Overview({ docs, online }) {
       <h1>Overview.</h1>
       <p className="lede">Your regulatory documents, in one place.</p>
       <div className="stats">
-        <div><strong>{docs ? docs.length : "-"}</strong><span>Documents stored</span></div>
-        <div><strong>{docs ? total || "-" : "-"}</strong><span>Pages extracted</span></div>
+        <div><strong><Num v={docs?.length} /></strong><span>Documents stored</span></div>
+        <div><strong><Num v={total || undefined} /></strong><span>Pages extracted</span></div>
         <div><strong>{online === null ? "-" : online ? "Online" : "Offline"}</strong><span>Backend</span></div>
       </div>
       <h2>Recent documents</h2>
@@ -208,7 +262,7 @@ function Compare({ docs, fail }) {
         <div className="list">{changes.map((c) => (
           <div className="change" key={c.id}>
             <small>{c.type === "insert" ? "Added" : c.type === "delete" ? "Removed" : "Replaced"}{c.page ? `, page ${c.page}` : ""}</small>
-            <p>{c.before && <s>{c.before}</s>} {c.after && <ins>{c.after}</ins>}</p>
+            <div className="split"><p>{c.before ? <s>{c.before}</s> : <em>Nothing here before</em>}</p><p>{c.after ? <ins>{c.after}</ins> : <em>Removed in the new version</em>}</p></div>
           </div>))}</div></> : <><p className="lede">No changes found, or the response had an unexpected shape:</p><pre className="raw">{JSON.stringify(res, null, 2)}</pre></>)}
     </>
   );
