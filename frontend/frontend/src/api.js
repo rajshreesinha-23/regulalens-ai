@@ -7,34 +7,18 @@ async function req(path, opts) {
   if (!res.ok) {
     let msg = "";
     try { const b = await res.json(); msg = typeof b.detail === "string" ? b.detail : JSON.stringify(b.detail ?? b); } catch {}
-    const e = new Error(msg || `Request failed (${res.status}).`);
-    e.status = res.status;
-    throw e;
+    throw new Error(msg || `Request failed (${res.status}).`);
   }
   return res.json();
 }
 const post = (body) => ({ method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
 
-// Tries each route in order; moves on only when a route doesn't exist (404/405).
-async function first(tries) {
-  let last;
-  for (const t of tries) {
-    try { return await t(); } catch (e) { last = e; if (![404, 405].includes(e.status)) throw e; }
-  }
-  throw last;
-}
-
 export const api = {
   health: () => req("/health"),
   list: async () => { const d = await req("/documents"); return Array.isArray(d) ? d : d.documents || []; },
-  upload: (file) => {
-    const form = () => { const f = new FormData(); f.append("file", file); return { method: "POST", body: f }; };
-    return first([() => req("/documents/extract", form()), () => req("/documents/upload", form())]);
-  },
-  compare: (a, b) => first([
-    () => req("/documents/compare", post({ old_document_id: a, new_document_id: b })),
-    () => req("/compare", post({ document_a_id: a, document_b_id: b })),
-  ]),
+  get: (id) => req(`/documents/${id}`),
+  upload: (file) => { const f = new FormData(); f.append("file", file); return req("/documents/extract", { method: "POST", body: f }); },
+  compare: (a, b) => req("/documents/compare", post({ old_document_id: a, new_document_id: b })),
   ask: (question, ids) => req("/ask", post({ question, document_ids: ids })),
 };
 
